@@ -1,8 +1,14 @@
-﻿namespace Vakor.GeneticAlgorithm.Lib.Backpacks
+﻿using System.Collections.Generic;
+using Vakor.GeneticAlgorithm.Lib.Items;
+
+namespace Vakor.GeneticAlgorithm.Lib.Backpacks
 {
     public interface IBackpack
     {
-        public int  Capacity { get; set; }
-        
+        int Capacity { get;}
+        List<IItem> BackpackItems { get; } 
+
+        void FillBackpack(IItem[] allItems, bool[] genes);
+
     }
 }
