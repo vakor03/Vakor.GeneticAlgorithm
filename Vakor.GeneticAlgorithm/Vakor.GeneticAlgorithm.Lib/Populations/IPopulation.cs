@@ -8,7 +8,10 @@ namespace Vakor.GeneticAlgorithm.Lib.Populations
         int PopulationSize { get; }
         List<IIndividual> Individuals { get; }
         IIndividual Fittest { get; }
-        IIndividual GetLeastFittest { get; }
+        IIndividual RandomAmongFitness { get; }
+        int GetLeastFittestIndex { get; }
         
+        void FormStartPopulation(int populationLength);
+        void AddToPopulation(IIndividual individual);
     }
 }
