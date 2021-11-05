@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vakor.GeneticAlgorithm.Lib"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vakor.GeneticAlgorithm.ConsoleApp", "Vakor.GeneticAlgorithm.ConsoleApp\Vakor.GeneticAlgorithm.ConsoleApp.csproj", "{282F6EFD-D69F-4347-8B67-72702763C195}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vakor.GeneticAlgorithm.Tests", "Vakor.GeneticAlgorithm.Tests\Vakor.GeneticAlgorithm.Tests.csproj", "{D319A38C-0BC9-4819-BEB9-6CFFB06EAF50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{282F6EFD-D69F-4347-8B67-72702763C195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{282F6EFD-D69F-4347-8B67-72702763C195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{282F6EFD-D69F-4347-8B67-72702763C195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D319A38C-0BC9-4819-BEB9-6CFFB06EAF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D319A38C-0BC9-4819-BEB9-6CFFB06EAF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D319A38C-0BC9-4819-BEB9-6CFFB06EAF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D319A38C-0BC9-4819-BEB9-6CFFB06EAF50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
