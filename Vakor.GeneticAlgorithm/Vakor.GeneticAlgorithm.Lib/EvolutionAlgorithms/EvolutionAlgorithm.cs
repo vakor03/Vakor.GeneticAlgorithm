@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vakor.GeneticAlgorithm.Lib.Backpacks;
@@ -11,42 +10,71 @@ namespace Vakor.GeneticAlgorithm.Lib.EvolutionAlgorithms
 {
     public class EvolutionAlgorithm : IEvolutionAlgorithm
     {
-        private IPopulation _population;
-        private Configuration _configuration = new();
+        private readonly IPopulation _population = new Population();
+        private readonly Configuration _configuration = new();
         private List<IIndividual> _offsprings = new();
         private IItem[] _allItems;
         private IBackpack _backpack;
 
-        public IBackpack SolveBackpackTask(int maxBackpackCap, IEnumerable<IItem> items)
+        public IBackpack SolveBackpackTask(int maxBackpackCap, IEnumerable<IItem> items, int generationCount)
         {
-            
-            _allItems = items as IItem[] ?? items.ToArray();
-            _configuration.ItemsCount = _allItems.Count();
+            _allItems = items as IItem[] ?? items.OrderByDescending(item => item.Value / item.Capacity).ToArray();
             _backpack = new Backpack(maxBackpackCap);
-            _population.FormStartPopulation(_allItems.Length);
-            for (int i = 0; i < _configuration.AlgorithmIterationCount; i++)
-            {
-                IIndividual[] parents = ChooseParents();
-                
-                for (int j = 0; j < parents.Length / 2; j++)
-                {
-                    _offsprings.AddRange(parents[j * 2].Crossover(parents[j * 2 + 1], _configuration.CrossoverPoint));
-                }
+            _configuration.GenerationCount = generationCount;
+            FormStartPopulation();
 
-                MutateOffSprings();
-                RemoveAllDeadOffsprings();
-                UpdateOffspringsFitness();
-                AddOffspringsToPopulation();
+            for (int i = 0; i < _configuration.GenerationCount; i++)
+            {
+                FormNewGeneration();
             }
+
             _backpack.FillBackpack(_allItems, _population.Fittest.Genes);
             return _backpack;
         }
 
+        private void FormStartPopulation()
+        {
+            _population.FormStartPopulation(_allItems.Length);
+            foreach (var individual in _population.Individuals)
+            {
+                individual.Fitness = CalculateIndividualFitness(individual);
+            }
+        }
+
+        private void FormNewGeneration()
+        {
+            IIndividual[] parents = ChooseParents();
+            _offsprings.AddRange(parents[0].Crossover(parents[1], _configuration.CrossoverPoint));
+
+            MutateOffSprings();
+            LocalBetterFunction();
+            UpdateOffspringsFitness();
+            AddOffspringsToPopulation();
+        }
+
         private void MutateOffSprings()
+        {
+            for (int i = 0; i < _offsprings.Count; i++)
+            {
+                IIndividual mutatedOffspring = _offsprings[i].Mutate(_configuration.MutationsPossibility);
+                if (OffspringIsAlive(mutatedOffspring))
+                {
+                    _offsprings[i] = mutatedOffspring;
+                }
+            }
+        }
+
+        private void LocalBetterFunction()
         {
             foreach (var individual in _offsprings)
             {
-                individual.Mutate(_configuration.MutationsPossibility);
+                int indexer = 0;
+                while (indexer < individual.GeneLength - 1 && individual.Genes[indexer])
+                {
+                    indexer++;
+                }
+
+                individual.Genes[indexer] = true;
             }
         }
 
@@ -54,21 +82,18 @@ namespace Vakor.GeneticAlgorithm.Lib.EvolutionAlgorithms
         {
             foreach (var individual in _offsprings)
             {
-                individual.UpdateFitness(CalculateIndividualFitness(individual));
+                individual.Fitness = CalculateIndividualFitness(individual);
             }
         }
+
         private IIndividual[] ChooseParents()
         {
-            IIndividual firstParent = _population.Fittest;
-            IIndividual secondParent = _population.RandomAmongFitness;
-
-            return new[] {firstParent, secondParent};
+            return new[] {_population.Fittest, _population.Random};
         }
 
-
-        private void RemoveAllDeadOffsprings()
+        private bool OffspringIsAlive(IIndividual offspring)
         {
-            _offsprings = _offsprings.Where(o => CalculateIndividualCapacity(o) <= _backpack.Capacity).ToList();
+            return CalculateIndividualCapacity(offspring) <= _backpack.MaxCapacity;
         }
 
         private double CalculateIndividualCapacity(IIndividual individual)
@@ -81,7 +106,7 @@ namespace Vakor.GeneticAlgorithm.Lib.EvolutionAlgorithms
 
             return individualCapacity;
         }
-        
+
         private double CalculateIndividualFitness(IIndividual individual)
         {
             double individualFitness = 0;
@@ -95,11 +120,20 @@ namespace Vakor.GeneticAlgorithm.Lib.EvolutionAlgorithms
 
         private void AddOffspringsToPopulation()
         {
-            foreach (var individual in _offsprings)
+            RemoveAllDeadOffsprings();
+            foreach (var individual in _offsprings.Where(os =>
+                _population.Individuals.Count(ind => ind.Genes.SequenceEqual(os.Genes)) == 0))
+
             {
                 _population.AddToPopulation(individual);
             }
+
             _offsprings.Clear();
+        }
+
+        private void RemoveAllDeadOffsprings()
+        {
+            _offsprings = _offsprings.Where(OffspringIsAlive).ToList();
         }
     }
 }

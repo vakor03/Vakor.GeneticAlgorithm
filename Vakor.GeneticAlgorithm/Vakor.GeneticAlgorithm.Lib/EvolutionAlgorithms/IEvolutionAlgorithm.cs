@@ -6,6 +6,6 @@ namespace Vakor.GeneticAlgorithm.Lib.EvolutionAlgorithms
 {
     public interface IEvolutionAlgorithm
     {
-        IBackpack SolveBackpackTask(int maxBackpackCap, IEnumerable<IItem> items);
+        IBackpack SolveBackpackTask(int maxBackpackCap, IEnumerable<IItem> items, int generationCount = 1000);
     }
 }
