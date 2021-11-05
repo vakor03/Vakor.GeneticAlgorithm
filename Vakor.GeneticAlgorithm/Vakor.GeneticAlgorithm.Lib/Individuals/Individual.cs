@@ -6,25 +6,20 @@ namespace Vakor.GeneticAlgorithm.Lib.Individuals
     {
         public int GeneLength { get; }
         public bool[] Genes { get; }
-        public double Fitness => _fitness;
-
-        private double _fitness;
+        public double Fitness { get; set; }
 
         public Individual(bool[] genes)
         {
             Genes = genes;
             GeneLength = genes.Length;
-            _fitness = 0;
         }
 
-        public void UpdateFitness(double newFitness)
-        {
-            _fitness = newFitness;
-        }
-
-        public void Mutate(double mutatePossibility)
+        public IIndividual Mutate(double mutatePossibility)
         {
             Random random = new Random();
+            bool[] mutatedGenes = new bool[GeneLength];
+            Array.Copy(Genes, mutatedGenes, GeneLength);
+            Individual mutatedIndividual = new Individual(mutatedGenes);
             if (random.NextDouble() <= mutatePossibility)
             {
                 int index1 = random.Next(GeneLength);
@@ -34,8 +29,10 @@ namespace Vakor.GeneticAlgorithm.Lib.Individuals
                     index2 = random.Next(GeneLength);
                 } while (index2 == index1);
 
-                SwapGenes(index1, index2);
+                mutatedIndividual.SwapGenes(index1, index2);
             }
+
+            return mutatedIndividual;
         }
 
         private void SwapGenes(int index1, int index2)

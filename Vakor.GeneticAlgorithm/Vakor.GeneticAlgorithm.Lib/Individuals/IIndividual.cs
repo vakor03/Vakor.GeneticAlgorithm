@@ -4,10 +4,9 @@ namespace Vakor.GeneticAlgorithm.Lib.Individuals
     {
         int GeneLength { get; }
         bool[] Genes { get;}
-        double Fitness { get; }
+        double Fitness { get; set; }
 
-        void UpdateFitness(double newFitness);
-        void Mutate(double mutatePossibility);
+        IIndividual Mutate(double mutatePossibility);
         IIndividual[] Crossover(IIndividual secondParent, double crossoverPoint);
 
     }
