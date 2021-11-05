@@ -6,10 +6,10 @@ namespace Vakor.GeneticAlgorithm.Lib.Populations
     public interface IPopulation
     {
         int PopulationSize { get; }
-        List<IIndividual> Individuals { get; }
+        IIndividual[] Individuals { get; }
         IIndividual Fittest { get; }
-        IIndividual RandomAmongFitness { get; }
-        int GetLeastFittestIndex { get; }
+        IIndividual Random { get; }
+        int LeastFittestIndex { get; }
         
         void FormStartPopulation(int populationLength);
         void AddToPopulation(IIndividual individual);
